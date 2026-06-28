@@ -1,22 +1,28 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Underworld game API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: player
+  - name: crimes
+  - name: carTheft
+  - name: heist
+  - name: travel
+  - name: activity
+  - name: reward
+  - name: garage
+  - name: rankings
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +30,492 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /player/me:
+    get:
+      operationId: getPlayer
+      tags: [player]
+      summary: Get current player
+      responses:
+        "200":
+          description: Player profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+
+  /reward/daily:
+    get:
+      operationId: getDailyReward
+      tags: [reward]
+      summary: Get daily reward status
+      responses:
+        "200":
+          description: Daily reward info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyReward"
+    post:
+      operationId: claimDailyReward
+      tags: [reward]
+      summary: Claim daily reward
+      responses:
+        "200":
+          description: Reward claimed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyRewardResult"
+
+  /crimes:
+    get:
+      operationId: getCrimes
+      tags: [crimes]
+      summary: List available crimes
+      responses:
+        "200":
+          description: List of crimes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Crime"
+
+  /crimes/{crimeId}/commit:
+    post:
+      operationId: commitCrime
+      tags: [crimes]
+      summary: Commit a crime
+      parameters:
+        - name: crimeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Crime result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrimeResult"
+
+  /car-theft/available:
+    get:
+      operationId: getAvailableCars
+      tags: [carTheft]
+      summary: Get cars available to steal
+      responses:
+        "200":
+          description: List of cars
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CarTarget"
+
+  /car-theft/steal:
+    post:
+      operationId: stealCar
+      tags: [carTheft]
+      summary: Steal a car
+      responses:
+        "200":
+          description: Theft result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarTheftResult"
+
+  /heist/plans:
+    get:
+      operationId: getHeistPlans
+      tags: [heist]
+      summary: Get available heist plans
+      responses:
+        "200":
+          description: Heist plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HeistPlan"
+
+  /heist/execute:
+    post:
+      operationId: executeHeist
+      tags: [heist]
+      summary: Execute a heist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HeistInput"
+      responses:
+        "200":
+          description: Heist result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeistResult"
+
+  /travel/cities:
+    get:
+      operationId: getCities
+      tags: [travel]
+      summary: Get cities to travel to
+      responses:
+        "200":
+          description: Cities list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/City"
+
+  /travel/go:
+    post:
+      operationId: travelToCity
+      tags: [travel]
+      summary: Travel to a city
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TravelInput"
+      responses:
+        "200":
+          description: Travel result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TravelResult"
+
+  /activity/feed:
+    get:
+      operationId: getActivityFeed
+      tags: [activity]
+      summary: Get global activity feed
+      responses:
+        "200":
+          description: Activity feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEntry"
+
+  /activity/recent:
+    get:
+      operationId: getRecentActivity
+      tags: [activity]
+      summary: Get recent player activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentActivityEntry"
+
+  /garage/vehicles:
+    get:
+      operationId: getGarageVehicles
+      tags: [garage]
+      summary: Get player vehicles
+      responses:
+        "200":
+          description: Vehicles list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+
+  /rankings/top:
+    get:
+      operationId: getTopRankings
+      tags: [rankings]
+      summary: Get top rankings
+      responses:
+        "200":
+          description: Rankings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RankingEntry"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    Player:
+      type: object
+      required: [id, username, rank, rankProgress, hp, maxHp, energy, maxEnergy, nerve, maxNerve, cash, respect, streakDays, city]
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        rank:
+          type: string
+        rankProgress:
+          type: integer
+        hp:
+          type: integer
+        maxHp:
+          type: integer
+        energy:
+          type: integer
+        maxEnergy:
+          type: integer
+        nerve:
+          type: integer
+        maxNerve:
+          type: integer
+        cash:
+          type: integer
+        respect:
+          type: integer
+        streakDays:
+          type: integer
+        city:
+          type: string
+
+    DailyReward:
+      type: object
+      required: [canClaim, nextClaimInSeconds, streakDays, rewardAmount]
+      properties:
+        canClaim:
+          type: boolean
+        nextClaimInSeconds:
+          type: integer
+        streakDays:
+          type: integer
+        rewardAmount:
+          type: integer
+
+    DailyRewardResult:
+      type: object
+      required: [success, amount, newStreakDays]
+      properties:
+        success:
+          type: boolean
+        amount:
+          type: integer
+        newStreakDays:
+          type: integer
+
+    Crime:
+      type: object
+      required: [id, name, description, cashReward, respReward, nerveCost, successRate]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cashReward:
+          type: integer
+        respReward:
+          type: integer
+        nerveCost:
+          type: integer
+        successRate:
+          type: integer
+
+    CrimeResult:
+      type: object
+      required: [success, message, cashGained, respectGained]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        cashGained:
+          type: integer
+        respectGained:
+          type: integer
+
+    CarTarget:
+      type: object
+      required: [id, make, model, value, difficultyPct]
+      properties:
+        id:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        value:
+          type: integer
+        difficultyPct:
+          type: integer
+
+    CarTheftResult:
+      type: object
+      required: [success, message, cashValue]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        vehicle:
+          type: ["string", "null"]
+        cashValue:
+          type: integer
+
+    HeistPlan:
+      type: object
+      required: [id, name, description, reward, nerveCost, minPlayers]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        reward:
+          type: integer
+        nerveCost:
+          type: integer
+        minPlayers:
+          type: integer
+
+    HeistInput:
+      type: object
+      required: [planId]
+      properties:
+        planId:
+          type: string
+
+    HeistResult:
+      type: object
+      required: [success, message, cashGained, respectGained]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        cashGained:
+          type: integer
+        respectGained:
+          type: integer
+
+    City:
+      type: object
+      required: [id, name, country, travelCost, unlockRank]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        travelCost:
+          type: integer
+        unlockRank:
+          type: string
+
+    TravelInput:
+      type: object
+      required: [cityId]
+      properties:
+        cityId:
+          type: string
+
+    TravelResult:
+      type: object
+      required: [success, message, newCity]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        newCity:
+          type: string
+
+    ActivityEntry:
+      type: object
+      required: [id, username, action, detail, timeAgo, avatarColor]
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        action:
+          type: string
+        detail:
+          type: string
+        timeAgo:
+          type: string
+        avatarColor:
+          type: string
+
+    RecentActivityEntry:
+      type: object
+      required: [id, description, amount, timeAgo, type]
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        target:
+          type: ["string", "null"]
+        amount:
+          type: integer
+        timeAgo:
+          type: string
+        type:
+          type: string
+
+    Vehicle:
+      type: object
+      required: [id, make, model, year, value, condition]
+      properties:
+        id:
+          type: integer
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        value:
+          type: integer
+        condition:
+          type: string
+
+    RankingEntry:
+      type: object
+      required: [position, username, rank, respect, cash]
+      properties:
+        position:
+          type: integer
+        username:
+          type: string
+        rank:
+          type: string
+        respect:
+          type: integer
+        cash:
+          type: integer

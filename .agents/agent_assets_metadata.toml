@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "_Ns9hYzjC_4SDuGb89whW"
+uri = "file://artifacts/underworld/public/images/hero.png"
+type = "image"
+title = "Night city skyline with helicopter"
+
+[[generated]]
+id = "lukhnqVYoU70m5VY-RXhH"
+uri = "file://artifacts/underworld/public/images/crimes.png"
+type = "image"
+title = "Gun and cash on table"
+
+[[generated]]
+id = "cCk4V3PZGZMnS9qW24A0E"
+uri = "file://artifacts/underworld/public/images/car-theft.png"
+type = "image"
+title = "Luxury car at night"
+
+[[generated]]
+id = "S7canb5kU-z-9KTME_AUx"
+uri = "file://artifacts/underworld/public/images/heist.png"
+type = "image"
+title = "Bank vault door"
+
+[[generated]]
+id = "vp_yBdaoqRu8DSSvdYNlY"
+uri = "file://artifacts/underworld/public/images/travel.png"
+type = "image"
+title = "Private jet at night"
