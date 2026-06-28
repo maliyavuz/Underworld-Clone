@@ -146,3 +146,79 @@ export interface RankingEntry {
   cash: number;
 }
 
+export interface Property {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;
+  incomePerHour: number;
+  category: string;
+  owned: boolean;
+  pendingIncome: number;
+  /** @nullable */
+  lastCollectedAt: string | null;
+}
+
+export interface BuyPropertyResult {
+  success: boolean;
+  message: string;
+}
+
+export interface CollectPropertyResult {
+  success: boolean;
+  amountCollected: number;
+}
+
+export interface MarketItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  type: string;
+  effect: string;
+  owned: boolean;
+}
+
+export interface BuyItemResult {
+  success: boolean;
+  message: string;
+}
+
+export interface Message {
+  id: number;
+  senderUsername: string;
+  content: string;
+  read: boolean;
+  timeAgo: string;
+}
+
+export interface SendMessageInput {
+  toUsername: string;
+  content: string;
+}
+
+export interface SendMessageResult {
+  success: boolean;
+}
+
+export interface MarkMessageReadResult {
+  success: boolean;
+}
+
+export interface GroupCrime {
+  id: string;
+  name: string;
+  description: string;
+  cashReward: number;
+  nerveCost: number;
+  minMembers: number;
+  successRate: number;
+}
+
+export interface CommitGroupCrimeResult {
+  success: boolean;
+  message: string;
+  cashGained: number;
+  respectGained: number;
+}
+

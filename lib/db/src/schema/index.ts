@@ -5,3 +5,7 @@ export * from "./heists";
 export * from "./cities";
 export * from "./activity";
 export * from "./rewards";
+export * from "./properties";
+export * from "./market";
+export * from "./messages";
+export * from "./group-crimes";

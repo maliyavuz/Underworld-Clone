@@ -21,20 +21,31 @@ import type {
 
 import type {
   ActivityEntry,
+  BuyItemResult,
+  BuyPropertyResult,
   CarTarget,
   CarTheftResult,
   City,
+  CollectPropertyResult,
+  CommitGroupCrimeResult,
   Crime,
   CrimeResult,
   DailyReward,
   DailyRewardResult,
+  GroupCrime,
   HealthStatus,
   HeistInput,
   HeistPlan,
   HeistResult,
+  MarkMessageReadResult,
+  MarketItem,
+  Message,
   Player,
+  Property,
   RankingEntry,
   RecentActivityEntry,
+  SendMessageInput,
+  SendMessageResult,
   TravelInput,
   TravelResult,
   Vehicle
@@ -1263,4 +1274,732 @@ export function useGetTopRankings<TData = Awaited<ReturnType<typeof getTopRankin
 
 
 
+
+export const getGetPropertiesUrl = () => {
+
+
+
+
+  return `/api/properties`
+}
+
+/**
+ * @summary List all properties with ownership status
+ */
+export const getProperties = async ( options?: RequestInit): Promise<Property[]> => {
+
+  return customFetch<Property[]>(getGetPropertiesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPropertiesQueryKey = () => {
+    return [
+    `/api/properties`
+    ] as const;
+    }
+
+
+export const getGetPropertiesQueryOptions = <TData = Awaited<ReturnType<typeof getProperties>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProperties>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPropertiesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProperties>>> = ({ signal }) => getProperties({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProperties>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPropertiesQueryResult = NonNullable<Awaited<ReturnType<typeof getProperties>>>
+export type GetPropertiesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List all properties with ownership status
+ */
+
+export function useGetProperties<TData = Awaited<ReturnType<typeof getProperties>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProperties>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPropertiesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getBuyPropertyUrl = (propertyId: string,) => {
+
+
+
+
+  return `/api/properties/${propertyId}/buy`
+}
+
+/**
+ * @summary Purchase a property
+ */
+export const buyProperty = async (propertyId: string, options?: RequestInit): Promise<BuyPropertyResult> => {
+
+  return customFetch<BuyPropertyResult>(getBuyPropertyUrl(propertyId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getBuyPropertyMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof buyProperty>>, TError,{propertyId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof buyProperty>>, TError,{propertyId: string}, TContext> => {
+
+const mutationKey = ['buyProperty'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof buyProperty>>, {propertyId: string}> = (props) => {
+          const {propertyId} = props ?? {};
+
+          return  buyProperty(propertyId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BuyPropertyMutationResult = NonNullable<Awaited<ReturnType<typeof buyProperty>>>
+
+    export type BuyPropertyMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Purchase a property
+ */
+export const useBuyProperty = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof buyProperty>>, TError,{propertyId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof buyProperty>>,
+        TError,
+        {propertyId: string},
+        TContext
+      > => {
+      return useMutation(getBuyPropertyMutationOptions(options));
+    }
+
+export const getCollectPropertyIncomeUrl = (propertyId: string,) => {
+
+
+
+
+  return `/api/properties/${propertyId}/collect`
+}
+
+/**
+ * @summary Collect pending income from a property
+ */
+export const collectPropertyIncome = async (propertyId: string, options?: RequestInit): Promise<CollectPropertyResult> => {
+
+  return customFetch<CollectPropertyResult>(getCollectPropertyIncomeUrl(propertyId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getCollectPropertyIncomeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof collectPropertyIncome>>, TError,{propertyId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof collectPropertyIncome>>, TError,{propertyId: string}, TContext> => {
+
+const mutationKey = ['collectPropertyIncome'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof collectPropertyIncome>>, {propertyId: string}> = (props) => {
+          const {propertyId} = props ?? {};
+
+          return  collectPropertyIncome(propertyId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CollectPropertyIncomeMutationResult = NonNullable<Awaited<ReturnType<typeof collectPropertyIncome>>>
+
+    export type CollectPropertyIncomeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Collect pending income from a property
+ */
+export const useCollectPropertyIncome = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof collectPropertyIncome>>, TError,{propertyId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof collectPropertyIncome>>,
+        TError,
+        {propertyId: string},
+        TContext
+      > => {
+      return useMutation(getCollectPropertyIncomeMutationOptions(options));
+    }
+
+export const getGetMarketItemsUrl = () => {
+
+
+
+
+  return `/api/market/items`
+}
+
+/**
+ * @summary List black market items
+ */
+export const getMarketItems = async ( options?: RequestInit): Promise<MarketItem[]> => {
+
+  return customFetch<MarketItem[]>(getGetMarketItemsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMarketItemsQueryKey = () => {
+    return [
+    `/api/market/items`
+    ] as const;
+    }
+
+
+export const getGetMarketItemsQueryOptions = <TData = Awaited<ReturnType<typeof getMarketItems>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMarketItems>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMarketItemsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMarketItems>>> = ({ signal }) => getMarketItems({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMarketItems>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMarketItemsQueryResult = NonNullable<Awaited<ReturnType<typeof getMarketItems>>>
+export type GetMarketItemsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List black market items
+ */
+
+export function useGetMarketItems<TData = Awaited<ReturnType<typeof getMarketItems>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMarketItems>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetMarketItemsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getBuyMarketItemUrl = (itemId: string,) => {
+
+
+
+
+  return `/api/market/buy/${itemId}`
+}
+
+/**
+ * @summary Buy a black market item
+ */
+export const buyMarketItem = async (itemId: string, options?: RequestInit): Promise<BuyItemResult> => {
+
+  return customFetch<BuyItemResult>(getBuyMarketItemUrl(itemId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getBuyMarketItemMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof buyMarketItem>>, TError,{itemId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof buyMarketItem>>, TError,{itemId: string}, TContext> => {
+
+const mutationKey = ['buyMarketItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof buyMarketItem>>, {itemId: string}> = (props) => {
+          const {itemId} = props ?? {};
+
+          return  buyMarketItem(itemId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BuyMarketItemMutationResult = NonNullable<Awaited<ReturnType<typeof buyMarketItem>>>
+
+    export type BuyMarketItemMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Buy a black market item
+ */
+export const useBuyMarketItem = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof buyMarketItem>>, TError,{itemId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof buyMarketItem>>,
+        TError,
+        {itemId: string},
+        TContext
+      > => {
+      return useMutation(getBuyMarketItemMutationOptions(options));
+    }
+
+export const getGetInboxUrl = () => {
+
+
+
+
+  return `/api/messages/inbox`
+}
+
+/**
+ * @summary Get player inbox messages
+ */
+export const getInbox = async ( options?: RequestInit): Promise<Message[]> => {
+
+  return customFetch<Message[]>(getGetInboxUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetInboxQueryKey = () => {
+    return [
+    `/api/messages/inbox`
+    ] as const;
+    }
+
+
+export const getGetInboxQueryOptions = <TData = Awaited<ReturnType<typeof getInbox>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getInbox>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetInboxQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getInbox>>> = ({ signal }) => getInbox({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getInbox>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetInboxQueryResult = NonNullable<Awaited<ReturnType<typeof getInbox>>>
+export type GetInboxQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get player inbox messages
+ */
+
+export function useGetInbox<TData = Awaited<ReturnType<typeof getInbox>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getInbox>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetInboxQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSendMessageUrl = () => {
+
+
+
+
+  return `/api/messages/send`
+}
+
+/**
+ * @summary Send a message to another player
+ */
+export const sendMessage = async (sendMessageInput: SendMessageInput, options?: RequestInit): Promise<SendMessageResult> => {
+
+  return customFetch<SendMessageResult>(getSendMessageUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(sendMessageInput)
+  }
+);}
+
+
+
+
+export const getSendMessageMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendMessage>>, TError,{data: BodyType<SendMessageInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof sendMessage>>, TError,{data: BodyType<SendMessageInput>}, TContext> => {
+
+const mutationKey = ['sendMessage'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendMessage>>, {data: BodyType<SendMessageInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  sendMessage(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendMessageMutationResult = NonNullable<Awaited<ReturnType<typeof sendMessage>>>
+    export type SendMessageMutationBody = BodyType<SendMessageInput>
+    export type SendMessageMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Send a message to another player
+ */
+export const useSendMessage = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendMessage>>, TError,{data: BodyType<SendMessageInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof sendMessage>>,
+        TError,
+        {data: BodyType<SendMessageInput>},
+        TContext
+      > => {
+      return useMutation(getSendMessageMutationOptions(options));
+    }
+
+export const getMarkMessageReadUrl = (messageId: number,) => {
+
+
+
+
+  return `/api/messages/${messageId}/read`
+}
+
+/**
+ * @summary Mark a message as read
+ */
+export const markMessageRead = async (messageId: number, options?: RequestInit): Promise<MarkMessageReadResult> => {
+
+  return customFetch<MarkMessageReadResult>(getMarkMessageReadUrl(messageId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getMarkMessageReadMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markMessageRead>>, TError,{messageId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof markMessageRead>>, TError,{messageId: number}, TContext> => {
+
+const mutationKey = ['markMessageRead'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markMessageRead>>, {messageId: number}> = (props) => {
+          const {messageId} = props ?? {};
+
+          return  markMessageRead(messageId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MarkMessageReadMutationResult = NonNullable<Awaited<ReturnType<typeof markMessageRead>>>
+
+    export type MarkMessageReadMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Mark a message as read
+ */
+export const useMarkMessageRead = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markMessageRead>>, TError,{messageId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof markMessageRead>>,
+        TError,
+        {messageId: number},
+        TContext
+      > => {
+      return useMutation(getMarkMessageReadMutationOptions(options));
+    }
+
+export const getGetGroupCrimesUrl = () => {
+
+
+
+
+  return `/api/group-crimes`
+}
+
+/**
+ * @summary List available group crimes
+ */
+export const getGroupCrimes = async ( options?: RequestInit): Promise<GroupCrime[]> => {
+
+  return customFetch<GroupCrime[]>(getGetGroupCrimesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetGroupCrimesQueryKey = () => {
+    return [
+    `/api/group-crimes`
+    ] as const;
+    }
+
+
+export const getGetGroupCrimesQueryOptions = <TData = Awaited<ReturnType<typeof getGroupCrimes>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGroupCrimes>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGroupCrimesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGroupCrimes>>> = ({ signal }) => getGroupCrimes({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGroupCrimes>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGroupCrimesQueryResult = NonNullable<Awaited<ReturnType<typeof getGroupCrimes>>>
+export type GetGroupCrimesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List available group crimes
+ */
+
+export function useGetGroupCrimes<TData = Awaited<ReturnType<typeof getGroupCrimes>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGroupCrimes>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetGroupCrimesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCommitGroupCrimeUrl = (crimeId: string,) => {
+
+
+
+
+  return `/api/group-crimes/${crimeId}/commit`
+}
+
+/**
+ * @summary Commit a group crime
+ */
+export const commitGroupCrime = async (crimeId: string, options?: RequestInit): Promise<CommitGroupCrimeResult> => {
+
+  return customFetch<CommitGroupCrimeResult>(getCommitGroupCrimeUrl(crimeId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getCommitGroupCrimeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof commitGroupCrime>>, TError,{crimeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof commitGroupCrime>>, TError,{crimeId: string}, TContext> => {
+
+const mutationKey = ['commitGroupCrime'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof commitGroupCrime>>, {crimeId: string}> = (props) => {
+          const {crimeId} = props ?? {};
+
+          return  commitGroupCrime(crimeId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CommitGroupCrimeMutationResult = NonNullable<Awaited<ReturnType<typeof commitGroupCrime>>>
+
+    export type CommitGroupCrimeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Commit a group crime
+ */
+export const useCommitGroupCrime = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof commitGroupCrime>>, TError,{crimeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof commitGroupCrime>>,
+        TError,
+        {crimeId: string},
+        TContext
+      > => {
+      return useMutation(getCommitGroupCrimeMutationOptions(options));
+    }
 

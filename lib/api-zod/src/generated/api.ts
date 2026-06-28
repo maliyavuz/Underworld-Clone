@@ -223,3 +223,142 @@ export const GetTopRankingsResponseItem = zod.object({
 export const GetTopRankingsResponse = zod.array(GetTopRankingsResponseItem)
 
 
+/**
+ * @summary List all properties with ownership status
+ */
+export const GetPropertiesResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "cost": zod.number(),
+  "incomePerHour": zod.number(),
+  "category": zod.string(),
+  "owned": zod.boolean(),
+  "pendingIncome": zod.number(),
+  "lastCollectedAt": zod.string().nullable()
+})
+export const GetPropertiesResponse = zod.array(GetPropertiesResponseItem)
+
+
+/**
+ * @summary Purchase a property
+ */
+export const BuyPropertyParams = zod.object({
+  "propertyId": zod.coerce.string()
+})
+
+export const BuyPropertyResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Collect pending income from a property
+ */
+export const CollectPropertyIncomeParams = zod.object({
+  "propertyId": zod.coerce.string()
+})
+
+export const CollectPropertyIncomeResponse = zod.object({
+  "success": zod.boolean(),
+  "amountCollected": zod.number()
+})
+
+
+/**
+ * @summary List black market items
+ */
+export const GetMarketItemsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "price": zod.number(),
+  "type": zod.string(),
+  "effect": zod.string(),
+  "owned": zod.boolean()
+})
+export const GetMarketItemsResponse = zod.array(GetMarketItemsResponseItem)
+
+
+/**
+ * @summary Buy a black market item
+ */
+export const BuyMarketItemParams = zod.object({
+  "itemId": zod.coerce.string()
+})
+
+export const BuyMarketItemResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Get player inbox messages
+ */
+export const GetInboxResponseItem = zod.object({
+  "id": zod.number(),
+  "senderUsername": zod.string(),
+  "content": zod.string(),
+  "read": zod.boolean(),
+  "timeAgo": zod.string()
+})
+export const GetInboxResponse = zod.array(GetInboxResponseItem)
+
+
+/**
+ * @summary Send a message to another player
+ */
+export const SendMessageBody = zod.object({
+  "toUsername": zod.string(),
+  "content": zod.string()
+})
+
+export const SendMessageResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Mark a message as read
+ */
+export const MarkMessageReadParams = zod.object({
+  "messageId": zod.coerce.number()
+})
+
+export const MarkMessageReadResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary List available group crimes
+ */
+export const GetGroupCrimesResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "cashReward": zod.number(),
+  "nerveCost": zod.number(),
+  "minMembers": zod.number(),
+  "successRate": zod.number()
+})
+export const GetGroupCrimesResponse = zod.array(GetGroupCrimesResponseItem)
+
+
+/**
+ * @summary Commit a group crime
+ */
+export const CommitGroupCrimeParams = zod.object({
+  "crimeId": zod.coerce.string()
+})
+
+export const CommitGroupCrimeResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string(),
+  "cashGained": zod.number(),
+  "respectGained": zod.number()
+})
+
+

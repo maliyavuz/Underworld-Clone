@@ -10,6 +10,11 @@ import Heist from "@/pages/Heist";
 import Travel from "@/pages/Travel";
 import Garage from "@/pages/Garage";
 import Rankings from "@/pages/Rankings";
+import Properties from "@/pages/Properties";
+import BlackMarket from "@/pages/BlackMarket";
+import Messages from "@/pages/Messages";
+import GroupCrimes from "@/pages/GroupCrimes";
+import Notifications from "@/pages/Notifications";
 import { Placeholder } from "@/pages/Placeholder";
 import { Layout } from "@/components/Layout";
 
@@ -28,17 +33,17 @@ function Router() {
       <Route path="/travel" component={Travel} />
       <Route path="/garage" component={Garage} />
       <Route path="/rankings" component={Rankings} />
+      <Route path="/properties" component={Properties} />
+      <Route path="/black-market" component={BlackMarket} />
+      <Route path="/messages" component={Messages} />
+      <Route path="/group-crimes" component={GroupCrimes} />
+      <Route path="/notifications" component={Notifications} />
       <Route path="/family" component={PlaceholderPage} />
-      <Route path="/messages" component={PlaceholderPage} />
       <Route path="/settings" component={PlaceholderPage} />
       <Route path="/account" component={PlaceholderPage} />
       {/* Fallbacks */}
-      <Route path="/group-crimes" component={PlaceholderPage} />
       <Route path="/missions" component={PlaceholderPage} />
-      <Route path="/properties" component={PlaceholderPage} />
-      <Route path="/black-market" component={PlaceholderPage} />
       <Route path="/activity" component={PlaceholderPage} />
-      <Route path="/notifications" component={PlaceholderPage} />
       <Route path="/support" component={PlaceholderPage} />
       
       <Route component={NotFound} />

@@ -17,6 +17,10 @@ tags:
   - name: reward
   - name: garage
   - name: rankings
+  - name: properties
+  - name: market
+  - name: messages
+  - name: groupCrimes
 paths:
   /healthz:
     get:
@@ -257,6 +261,180 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/RankingEntry"
+
+  /properties:
+    get:
+      operationId: getProperties
+      tags: [properties]
+      summary: List all properties with ownership status
+      responses:
+        "200":
+          description: Properties list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+
+  /properties/{propertyId}/buy:
+    post:
+      operationId: buyProperty
+      tags: [properties]
+      summary: Purchase a property
+      parameters:
+        - name: propertyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Purchase result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuyPropertyResult"
+
+  /properties/{propertyId}/collect:
+    post:
+      operationId: collectPropertyIncome
+      tags: [properties]
+      summary: Collect pending income from a property
+      parameters:
+        - name: propertyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Collection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectPropertyResult"
+
+  /market/items:
+    get:
+      operationId: getMarketItems
+      tags: [market]
+      summary: List black market items
+      responses:
+        "200":
+          description: Market items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketItem"
+
+  /market/buy/{itemId}:
+    post:
+      operationId: buyMarketItem
+      tags: [market]
+      summary: Buy a black market item
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Purchase result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuyItemResult"
+
+  /messages/inbox:
+    get:
+      operationId: getInbox
+      tags: [messages]
+      summary: Get player inbox messages
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+
+  /messages/send:
+    post:
+      operationId: sendMessage
+      tags: [messages]
+      summary: Send a message to another player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageInput"
+      responses:
+        "200":
+          description: Send result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendMessageResult"
+
+  /messages/{messageId}/read:
+    post:
+      operationId: markMessageRead
+      tags: [messages]
+      summary: Mark a message as read
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarkMessageReadResult"
+
+  /group-crimes:
+    get:
+      operationId: getGroupCrimes
+      tags: [groupCrimes]
+      summary: List available group crimes
+      responses:
+        "200":
+          description: Group crimes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GroupCrime"
+
+  /group-crimes/{crimeId}/commit:
+    post:
+      operationId: commitGroupCrime
+      tags: [groupCrimes]
+      summary: Commit a group crime
+      parameters:
+        - name: crimeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommitGroupCrimeResult"
 
 components:
   schemas:
@@ -518,4 +696,143 @@ components:
         respect:
           type: integer
         cash:
+          type: integer
+
+    Property:
+      type: object
+      required: [id, name, description, cost, incomePerHour, category, owned, pendingIncome, lastCollectedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cost:
+          type: integer
+        incomePerHour:
+          type: integer
+        category:
+          type: string
+        owned:
+          type: boolean
+        pendingIncome:
+          type: integer
+        lastCollectedAt:
+          type: ["string", "null"]
+
+    BuyPropertyResult:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    CollectPropertyResult:
+      type: object
+      required: [success, amountCollected]
+      properties:
+        success:
+          type: boolean
+        amountCollected:
+          type: integer
+
+    MarketItem:
+      type: object
+      required: [id, name, description, price, type, effect, owned]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        type:
+          type: string
+        effect:
+          type: string
+        owned:
+          type: boolean
+
+    BuyItemResult:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    Message:
+      type: object
+      required: [id, senderUsername, content, read, timeAgo]
+      properties:
+        id:
+          type: integer
+        senderUsername:
+          type: string
+        content:
+          type: string
+        read:
+          type: boolean
+        timeAgo:
+          type: string
+
+    SendMessageInput:
+      type: object
+      required: [toUsername, content]
+      properties:
+        toUsername:
+          type: string
+        content:
+          type: string
+
+    SendMessageResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    MarkMessageReadResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    GroupCrime:
+      type: object
+      required: [id, name, description, cashReward, nerveCost, minMembers, successRate]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cashReward:
+          type: integer
+        nerveCost:
+          type: integer
+        minMembers:
+          type: integer
+        successRate:
+          type: integer
+
+    CommitGroupCrimeResult:
+      type: object
+      required: [success, message, cashGained, respectGained]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        cashGained:
+          type: integer
+        respectGained:
           type: integer

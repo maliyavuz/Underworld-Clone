@@ -9,6 +9,10 @@ import travelRouter from "./travel";
 import activityRouter from "./activity";
 import garageRouter from "./garage";
 import rankingsRouter from "./rankings";
+import propertiesRouter from "./properties";
+import marketRouter from "./market";
+import messagesRouter from "./messages";
+import groupCrimesRouter from "./group-crimes";
 
 const router: IRouter = Router();
 
@@ -22,5 +26,9 @@ router.use(travelRouter);
 router.use(activityRouter);
 router.use(garageRouter);
 router.use(rankingsRouter);
+router.use(propertiesRouter);
+router.use(marketRouter);
+router.use(messagesRouter);
+router.use(groupCrimesRouter);
 
 export default router;
