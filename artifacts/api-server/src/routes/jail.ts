@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, playersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { JailStatus, JailBailResult, JailBustResult } from "@workspace/api-zod";
+import { GetJailStatusResponse, PayBailResponse, BustFromJailResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 const DEFAULT_PLAYER_ID = 1;
@@ -28,7 +28,7 @@ router.get("/jail", async (req, res): Promise<void> => {
     : 0;
 
   res.json(
-    JailStatus.parse({
+    GetJailStatusResponse.parse({
       inJail,
       secondsRemaining,
       bailAmount: player.jailBail,
@@ -73,7 +73,7 @@ router.post("/jail/bail", async (req, res): Promise<void> => {
     .where(eq(playersTable.id, DEFAULT_PLAYER_ID));
 
   res.json(
-    JailBailResult.parse({
+    PayBailResponse.parse({
       success: true,
       message: `You paid $${player.jailBail.toLocaleString()} bail and walked free.`,
     })
@@ -123,7 +123,7 @@ router.post("/jail/bust", async (req, res): Promise<void> => {
     .where(eq(playersTable.id, DEFAULT_PLAYER_ID));
 
   res.json(
-    JailBustResult.parse({
+    BustFromJailResponse.parse({
       success: true,
       message:
         newSeconds === 0
