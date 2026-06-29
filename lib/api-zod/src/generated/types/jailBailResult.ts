@@ -6,12 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface CrimeResult {
+export interface JailBailResult {
   success: boolean;
   message: string;
-  cashGained: number;
-  respectGained: number;
-  jailed: boolean;
-  cooldownSeconds: number;
-  hpLost: number;
 }

@@ -37,6 +37,9 @@ import type {
   HeistInput,
   HeistPlan,
   HeistResult,
+  JailBailResult,
+  JailBustResult,
+  JailStatus,
   MarkMessageReadResult,
   MarketItem,
   Message,
@@ -2001,5 +2004,222 @@ export const useCommitGroupCrime = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getCommitGroupCrimeMutationOptions(options));
+    }
+
+export const getGetJailStatusUrl = () => {
+
+
+
+
+  return `/api/jail`
+}
+
+/**
+ * @summary Get current jail status
+ */
+export const getJailStatus = async ( options?: RequestInit): Promise<JailStatus> => {
+
+  return customFetch<JailStatus>(getGetJailStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetJailStatusQueryKey = () => {
+    return [
+    `/api/jail`
+    ] as const;
+    }
+
+
+export const getGetJailStatusQueryOptions = <TData = Awaited<ReturnType<typeof getJailStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getJailStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetJailStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getJailStatus>>> = ({ signal }) => getJailStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getJailStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetJailStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getJailStatus>>>
+export type GetJailStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get current jail status
+ */
+
+export function useGetJailStatus<TData = Awaited<ReturnType<typeof getJailStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getJailStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetJailStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getPayBailUrl = () => {
+
+
+
+
+  return `/api/jail/bail`
+}
+
+/**
+ * @summary Pay bail to get out of jail immediately
+ */
+export const payBail = async ( options?: RequestInit): Promise<JailBailResult> => {
+
+  return customFetch<JailBailResult>(getPayBailUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getPayBailMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof payBail>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof payBail>>, TError,void, TContext> => {
+
+const mutationKey = ['payBail'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof payBail>>, void> = () => {
+
+
+          return  payBail(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PayBailMutationResult = NonNullable<Awaited<ReturnType<typeof payBail>>>
+
+    export type PayBailMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Pay bail to get out of jail immediately
+ */
+export const usePayBail = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof payBail>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof payBail>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getPayBailMutationOptions(options));
+    }
+
+export const getBustFromJailUrl = () => {
+
+
+
+
+  return `/api/jail/bust`
+}
+
+/**
+ * @summary Spend nerve to reduce jail time
+ */
+export const bustFromJail = async ( options?: RequestInit): Promise<JailBustResult> => {
+
+  return customFetch<JailBustResult>(getBustFromJailUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getBustFromJailMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bustFromJail>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof bustFromJail>>, TError,void, TContext> => {
+
+const mutationKey = ['bustFromJail'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bustFromJail>>, void> = () => {
+
+
+          return  bustFromJail(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BustFromJailMutationResult = NonNullable<Awaited<ReturnType<typeof bustFromJail>>>
+
+    export type BustFromJailMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Spend nerve to reduce jail time
+ */
+export const useBustFromJail = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bustFromJail>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof bustFromJail>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getBustFromJailMutationOptions(options));
     }
 

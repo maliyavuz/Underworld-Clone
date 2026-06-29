@@ -21,4 +21,8 @@ export interface Player {
   respect: number;
   streakDays: number;
   city: string;
+  /** @nullable */
+  jailUntil: string | null;
+  /** @nullable */
+  crimeCooldownUntil: string | null;
 }

@@ -21,6 +21,7 @@ tags:
   - name: market
   - name: messages
   - name: groupCrimes
+  - name: jail
 paths:
   /healthz:
     get:
@@ -436,6 +437,45 @@ paths:
               schema:
                 $ref: "#/components/schemas/CommitGroupCrimeResult"
 
+  /jail:
+    get:
+      operationId: getJailStatus
+      tags: [jail]
+      summary: Get current jail status
+      responses:
+        "200":
+          description: Jail status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JailStatus"
+
+  /jail/bail:
+    post:
+      operationId: payBail
+      tags: [jail]
+      summary: Pay bail to get out of jail immediately
+      responses:
+        "200":
+          description: Bail result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JailBailResult"
+
+  /jail/bust:
+    post:
+      operationId: bustFromJail
+      tags: [jail]
+      summary: Spend nerve to reduce jail time
+      responses:
+        "200":
+          description: Bust result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JailBustResult"
+
 components:
   schemas:
     HealthStatus:
@@ -447,7 +487,7 @@ components:
 
     Player:
       type: object
-      required: [id, username, rank, rankProgress, hp, maxHp, energy, maxEnergy, nerve, maxNerve, cash, respect, streakDays, city]
+      required: [id, username, rank, rankProgress, hp, maxHp, energy, maxEnergy, nerve, maxNerve, cash, respect, streakDays, city, jailUntil, crimeCooldownUntil]
       properties:
         id:
           type: integer
@@ -477,6 +517,10 @@ components:
           type: integer
         city:
           type: string
+        jailUntil:
+          type: ["string", "null"]
+        crimeCooldownUntil:
+          type: ["string", "null"]
 
     DailyReward:
       type: object
@@ -504,7 +548,7 @@ components:
 
     Crime:
       type: object
-      required: [id, name, description, cashReward, respReward, nerveCost, successRate]
+      required: [id, name, description, cashReward, respReward, nerveCost, successRate, cooldownSeconds, jailChanceOnFail, hpLossOnFail, jailSeconds, bailCost]
       properties:
         id:
           type: string
@@ -520,10 +564,20 @@ components:
           type: integer
         successRate:
           type: integer
+        cooldownSeconds:
+          type: integer
+        jailChanceOnFail:
+          type: integer
+        hpLossOnFail:
+          type: integer
+        jailSeconds:
+          type: integer
+        bailCost:
+          type: integer
 
     CrimeResult:
       type: object
-      required: [success, message, cashGained, respectGained]
+      required: [success, message, cashGained, respectGained, jailed, cooldownSeconds, hpLost]
       properties:
         success:
           type: boolean
@@ -532,6 +586,12 @@ components:
         cashGained:
           type: integer
         respectGained:
+          type: integer
+        jailed:
+          type: boolean
+        cooldownSeconds:
+          type: integer
+        hpLost:
           type: integer
 
     CarTarget:
@@ -835,4 +895,39 @@ components:
         cashGained:
           type: integer
         respectGained:
+          type: integer
+
+    JailStatus:
+      type: object
+      required: [inJail, secondsRemaining, bailAmount, jailUntil]
+      properties:
+        inJail:
+          type: boolean
+        secondsRemaining:
+          type: integer
+        bailAmount:
+          type: integer
+        jailUntil:
+          type: ["string", "null"]
+
+    JailBailResult:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    JailBustResult:
+      type: object
+      required: [success, message, secondsReduced, secondsRemaining]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        secondsReduced:
+          type: integer
+        secondsRemaining:
           type: integer

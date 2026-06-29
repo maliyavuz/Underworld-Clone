@@ -33,7 +33,9 @@ export const GetPlayerResponse = zod.object({
   "cash": zod.number(),
   "respect": zod.number(),
   "streakDays": zod.number(),
-  "city": zod.string()
+  "city": zod.string(),
+  "jailUntil": zod.string().nullable(),
+  "crimeCooldownUntil": zod.string().nullable()
 })
 
 
@@ -68,7 +70,12 @@ export const GetCrimesResponseItem = zod.object({
   "cashReward": zod.number(),
   "respReward": zod.number(),
   "nerveCost": zod.number(),
-  "successRate": zod.number()
+  "successRate": zod.number(),
+  "cooldownSeconds": zod.number(),
+  "jailChanceOnFail": zod.number(),
+  "hpLossOnFail": zod.number(),
+  "jailSeconds": zod.number(),
+  "bailCost": zod.number()
 })
 export const GetCrimesResponse = zod.array(GetCrimesResponseItem)
 
@@ -84,7 +91,10 @@ export const CommitCrimeResponse = zod.object({
   "success": zod.boolean(),
   "message": zod.string(),
   "cashGained": zod.number(),
-  "respectGained": zod.number()
+  "respectGained": zod.number(),
+  "jailed": zod.boolean(),
+  "cooldownSeconds": zod.number(),
+  "hpLost": zod.number()
 })
 
 
@@ -359,6 +369,37 @@ export const CommitGroupCrimeResponse = zod.object({
   "message": zod.string(),
   "cashGained": zod.number(),
   "respectGained": zod.number()
+})
+
+
+/**
+ * @summary Get current jail status
+ */
+export const GetJailStatusResponse = zod.object({
+  "inJail": zod.boolean(),
+  "secondsRemaining": zod.number(),
+  "bailAmount": zod.number(),
+  "jailUntil": zod.string().nullable()
+})
+
+
+/**
+ * @summary Pay bail to get out of jail immediately
+ */
+export const PayBailResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Spend nerve to reduce jail time
+ */
+export const BustFromJailResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string(),
+  "secondsReduced": zod.number(),
+  "secondsRemaining": zod.number()
 })
 
 

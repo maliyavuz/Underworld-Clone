@@ -13,6 +13,7 @@ import propertiesRouter from "./properties";
 import marketRouter from "./market";
 import messagesRouter from "./messages";
 import groupCrimesRouter from "./group-crimes";
+import jailRouter from "./jail";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,6 @@ router.use(propertiesRouter);
 router.use(marketRouter);
 router.use(messagesRouter);
 router.use(groupCrimesRouter);
+router.use(jailRouter);
 
 export default router;

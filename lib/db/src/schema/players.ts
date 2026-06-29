@@ -17,6 +17,9 @@ export const playersTable = pgTable("players", {
   respect: integer("respect").notNull().default(0),
   streakDays: integer("streak_days").notNull().default(0),
   city: text("city").notNull().default("New York"),
+  crimeCooldownUntil: timestamp("crime_cooldown_until"),
+  jailUntil: timestamp("jail_until"),
+  jailBail: integer("jail_bail").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

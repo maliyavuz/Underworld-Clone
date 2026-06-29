@@ -11,6 +11,11 @@ export const crimesTable = pgTable("crimes", {
   respReward: integer("resp_reward").notNull(),
   nerveCost: integer("nerve_cost").notNull(),
   successRate: integer("success_rate").notNull(),
+  cooldownSeconds: integer("cooldown_seconds").notNull().default(60),
+  jailChanceOnFail: integer("jail_chance_on_fail").notNull().default(20),
+  hpLossOnFail: integer("hp_loss_on_fail").notNull().default(10),
+  jailSeconds: integer("jail_seconds").notNull().default(300),
+  bailCost: integer("bail_cost").notNull().default(5000),
 });
 
 export const insertCrimeSchema = createInsertSchema(crimesTable).omit({ id: true });

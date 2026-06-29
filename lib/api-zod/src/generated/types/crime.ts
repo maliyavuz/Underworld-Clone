@@ -14,4 +14,9 @@ export interface Crime {
   respReward: number;
   nerveCost: number;
   successRate: number;
+  cooldownSeconds: number;
+  jailChanceOnFail: number;
+  hpLossOnFail: number;
+  jailSeconds: number;
+  bailCost: number;
 }

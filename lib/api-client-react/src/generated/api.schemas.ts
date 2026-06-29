@@ -24,6 +24,10 @@ export interface Player {
   respect: number;
   streakDays: number;
   city: string;
+  /** @nullable */
+  jailUntil: string | null;
+  /** @nullable */
+  crimeCooldownUntil: string | null;
 }
 
 export interface DailyReward {
@@ -47,6 +51,11 @@ export interface Crime {
   respReward: number;
   nerveCost: number;
   successRate: number;
+  cooldownSeconds: number;
+  jailChanceOnFail: number;
+  hpLossOnFail: number;
+  jailSeconds: number;
+  bailCost: number;
 }
 
 export interface CrimeResult {
@@ -54,6 +63,9 @@ export interface CrimeResult {
   message: string;
   cashGained: number;
   respectGained: number;
+  jailed: boolean;
+  cooldownSeconds: number;
+  hpLost: number;
 }
 
 export interface CarTarget {
@@ -220,5 +232,25 @@ export interface CommitGroupCrimeResult {
   message: string;
   cashGained: number;
   respectGained: number;
+}
+
+export interface JailStatus {
+  inJail: boolean;
+  secondsRemaining: number;
+  bailAmount: number;
+  /** @nullable */
+  jailUntil: string | null;
+}
+
+export interface JailBailResult {
+  success: boolean;
+  message: string;
+}
+
+export interface JailBustResult {
+  success: boolean;
+  message: string;
+  secondsReduced: number;
+  secondsRemaining: number;
 }
 

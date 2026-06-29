@@ -15,6 +15,7 @@ import BlackMarket from "@/pages/BlackMarket";
 import Messages from "@/pages/Messages";
 import GroupCrimes from "@/pages/GroupCrimes";
 import Notifications from "@/pages/Notifications";
+import Jail from "@/pages/Jail";
 import { Placeholder } from "@/pages/Placeholder";
 import { Layout } from "@/components/Layout";
 
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/messages" component={Messages} />
       <Route path="/group-crimes" component={GroupCrimes} />
       <Route path="/notifications" component={Notifications} />
+      <Route path="/jail" component={Jail} />
       <Route path="/family" component={PlaceholderPage} />
       <Route path="/settings" component={PlaceholderPage} />
       <Route path="/account" component={PlaceholderPage} />
