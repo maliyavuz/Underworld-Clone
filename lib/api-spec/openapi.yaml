@@ -463,6 +463,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/JailBailResult"
 
+  /market/use/{itemId}:
+    post:
+      operationId: useMarketItem
+      tags: [market]
+      summary: Use a consumable item from inventory
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Use result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UseItemResult"
+
   /jail/bust:
     post:
       operationId: bustFromJail
@@ -895,6 +914,17 @@ components:
         cashGained:
           type: integer
         respectGained:
+          type: integer
+
+    UseItemResult:
+      type: object
+      required: [success, message, hpRestored]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        hpRestored:
           type: integer
 
     JailStatus:

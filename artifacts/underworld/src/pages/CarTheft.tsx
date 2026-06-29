@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Car, AlertTriangle, DollarSign } from "lucide-react";
+import { Car, AlertTriangle, DollarSign, Zap } from "lucide-react";
 
 export default function CarTheft() {
   const { data: cars, isLoading } = useGetAvailableCars();
@@ -58,7 +58,12 @@ export default function CarTheft() {
         <div className="bg-card border border-border p-6 rounded-xl flex items-center justify-between mb-8">
           <div>
             <h3 className="text-xl font-bold">Search for a Target</h3>
-            <p className="text-sm text-muted-foreground">Costs 5 Nerve to scout and steal.</p>
+            <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1 text-yellow-500 font-bold">
+                <Zap className="w-4 h-4" /> 20 Energy
+              </span>
+              <span className="text-muted-foreground">required per attempt</span>
+            </div>
           </div>
           <Button 
             size="lg" 

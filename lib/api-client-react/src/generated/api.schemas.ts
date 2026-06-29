@@ -234,6 +234,12 @@ export interface CommitGroupCrimeResult {
   respectGained: number;
 }
 
+export interface UseItemResult {
+  success: boolean;
+  message: string;
+  hpRestored: number;
+}
+
 export interface JailStatus {
   inJail: boolean;
   secondsRemaining: number;

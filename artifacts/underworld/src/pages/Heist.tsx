@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Lock, Zap, DollarSign, Users } from "lucide-react";
+import { Lock, Zap, DollarSign, Users, Battery } from "lucide-react";
 
 export default function Heist() {
   const { data: plans, isLoading } = useGetHeistPlans();
@@ -50,8 +50,12 @@ export default function Heist() {
           <h1 className="text-3xl font-black tracking-widest text-primary uppercase">Heists</h1>
         </div>
         <p className="text-muted-foreground max-w-2xl">
-          Coordinate massive hits for massive payouts. Make sure you have the nerve and the crew.
+          Coordinate massive hits for massive payouts. Make sure you have the nerve, the energy, and the crew.
         </p>
+        <div className="flex items-center gap-2 text-sm bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-2 w-fit">
+          <Battery className="w-4 h-4 text-yellow-400" />
+          <span className="text-yellow-400 font-bold">Each heist costs 30 Energy</span>
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

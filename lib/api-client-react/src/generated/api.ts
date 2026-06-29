@@ -51,6 +51,7 @@ import type {
   SendMessageResult,
   TravelInput,
   TravelResult,
+  UseItemResult,
   Vehicle
 } from './api.schemas';
 
@@ -2151,6 +2152,76 @@ export const usePayBail = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getPayBailMutationOptions(options));
+    }
+
+export const getUseMarketItemUrl = (itemId: string,) => {
+
+
+
+
+  return `/api/market/use/${itemId}`
+}
+
+/**
+ * @summary Use a consumable item from inventory
+ */
+export const useMarketItem = async (itemId: string, options?: RequestInit): Promise<UseItemResult> => {
+
+  return customFetch<UseItemResult>(getUseMarketItemUrl(itemId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getUseMarketItemMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof useMarketItem>>, TError,{itemId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof useMarketItem>>, TError,{itemId: string}, TContext> => {
+
+const mutationKey = ['useMarketItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof useMarketItem>>, {itemId: string}> = (props) => {
+          const {itemId} = props ?? {};
+
+          return  useMarketItem(itemId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UseMarketItemMutationResult = NonNullable<Awaited<ReturnType<typeof useMarketItem>>>
+
+    export type UseMarketItemMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Use a consumable item from inventory
+ */
+export const useUseMarketItem = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof useMarketItem>>, TError,{itemId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof useMarketItem>>,
+        TError,
+        {itemId: string},
+        TContext
+      > => {
+      return useMutation(getUseMarketItemMutationOptions(options));
     }
 
 export const getBustFromJailUrl = () => {

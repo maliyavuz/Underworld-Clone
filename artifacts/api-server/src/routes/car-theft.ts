@@ -1,10 +1,11 @@
 import { Router, type IRouter } from "express";
-import { db, vehicleTargetsTable, garageVehiclesTable, playersTable, playerActivityTable } from "@workspace/db";
+import { db, vehicleTargetsTable, garageVehiclesTable, playersTable, playerActivityTable, playerItemsTable, marketItemsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { GetAvailableCarsResponse, StealCarResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 const DEFAULT_PLAYER_ID = 1;
+const ENERGY_COST = 20;
 
 router.get("/car-theft/available", async (req, res): Promise<void> => {
   const cars = await db.select().from(vehicleTargetsTable);
@@ -24,6 +25,20 @@ router.post("/car-theft/steal", async (req, res): Promise<void> => {
     return;
   }
 
+  if (player.energy < ENERGY_COST) {
+    res.status(400).json({ error: `Not enough energy. Need ${ENERGY_COST}, have ${player.energy}.` });
+    return;
+  }
+
+  // Check if player owns lockpick set (bonus to success)
+  const ownedItems = await db
+    .select({ slug: marketItemsTable.slug })
+    .from(playerItemsTable)
+    .innerJoin(marketItemsTable, eq(playerItemsTable.itemId, marketItemsTable.id))
+    .where(eq(playerItemsTable.playerId, DEFAULT_PLAYER_ID));
+  const itemSlugs = new Set(ownedItems.map(i => i.slug));
+  const hasLockpick = itemSlugs.has("lockpick-set");
+
   const targets = await db.select().from(vehicleTargetsTable);
   if (targets.length === 0) {
     res.status(404).json({ error: "No vehicles available" });
@@ -32,7 +47,15 @@ router.post("/car-theft/steal", async (req, res): Promise<void> => {
 
   const target = targets[Math.floor(Math.random() * targets.length)];
   const roll = Math.random() * 100;
-  const success = roll > target.difficultyPct;
+  const bonusChance = hasLockpick ? 15 : 0;
+  const success = roll < (100 - target.difficultyPct + bonusChance);
+
+  const cashBonus = success ? Math.floor(target.value * 0.3) : 0;
+
+  await db.update(playersTable).set({
+    energy: Math.max(0, player.energy - ENERGY_COST),
+    cash: player.cash + cashBonus,
+  }).where(eq(playersTable.id, DEFAULT_PLAYER_ID));
 
   if (success) {
     await db.insert(garageVehiclesTable).values({
@@ -44,10 +67,6 @@ router.post("/car-theft/steal", async (req, res): Promise<void> => {
       condition: "Good",
     });
 
-    await db.update(playersTable).set({
-      cash: player.cash + Math.floor(target.value * 0.3),
-    }).where(eq(playersTable.id, DEFAULT_PLAYER_ID));
-
     await db.insert(playerActivityTable).values({
       playerId: DEFAULT_PLAYER_ID,
       description: `You stole a`,
@@ -55,21 +74,16 @@ router.post("/car-theft/steal", async (req, res): Promise<void> => {
       amount: target.value,
       type: "car_theft",
     });
-
-    res.json(StealCarResponse.parse({
-      success: true,
-      message: `You successfully stole a ${target.make} ${target.model}!`,
-      vehicle: `${target.make} ${target.model}`,
-      cashValue: target.value,
-    }));
-  } else {
-    res.json(StealCarResponse.parse({
-      success: false,
-      message: `You failed to steal the ${target.make} ${target.model}. The alarm went off!`,
-      vehicle: null,
-      cashValue: 0,
-    }));
   }
+
+  res.json(StealCarResponse.parse({
+    success,
+    message: success
+      ? `You successfully stole a ${target.make} ${target.model}! (+${ENERGY_COST} energy used)`
+      : `The alarm went off! You failed to steal the ${target.make} ${target.model}. (${ENERGY_COST} energy used)`,
+    vehicle: success ? `${target.make} ${target.model}` : null,
+    cashValue: target.value,
+  }));
 });
 
 export default router;

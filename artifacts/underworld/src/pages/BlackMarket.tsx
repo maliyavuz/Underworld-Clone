@@ -2,6 +2,7 @@ import { Layout } from "@/components/Layout";
 import {
   useGetMarketItems,
   useBuyMarketItem,
+  useUseMarketItem,
   getGetMarketItemsQueryKey,
   getGetPlayerQueryKey,
   useGetPlayer,
@@ -19,14 +20,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { ShoppingCart, Tag, Shield, Wrench, Sword } from "lucide-react";
+import { ShoppingCart, Tag, Shield, Wrench, Sword, Heart, Zap } from "lucide-react";
 
 export default function BlackMarket() {
   const { data: items, isLoading } = useGetMarketItems();
   const { data: player } = useGetPlayer();
   const buyItem = useBuyMarketItem();
+  const useItem = useUseMarketItem();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: getGetMarketItemsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetPlayerQueryKey() });
+  };
 
   const handleBuy = (itemId: string) => {
     buyItem.mutate(
@@ -34,30 +41,34 @@ export default function BlackMarket() {
       {
         onSuccess: (res: any) => {
           if (res.success) {
-            toast({
-              title: "Item Purchased!",
-              description: `You now own this item.`,
-            });
-            queryClient.invalidateQueries({
-              queryKey: getGetMarketItemsQueryKey(),
-            });
-            queryClient.invalidateQueries({ queryKey: getGetPlayerQueryKey() });
+            toast({ title: "Item Purchased!", description: "Check your inventory." });
+            invalidate();
           } else {
-            toast({
-              variant: "destructive",
-              title: "Purchase Failed",
-              description: res.message,
-            });
+            toast({ variant: "destructive", title: "Purchase Failed", description: res.message });
           }
         },
         onError: (err: any) => {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: err.message || "Something went wrong.",
-          });
+          toast({ variant: "destructive", title: "Error", description: err.response?.data?.error || err.message });
         },
-      },
+      }
+    );
+  };
+
+  const handleUse = (itemId: string, itemName: string) => {
+    useItem.mutate(
+      { itemId },
+      {
+        onSuccess: (res: any) => {
+          toast({
+            title: res.success ? `${itemName} Used!` : "Already Full",
+            description: res.message,
+          });
+          invalidate();
+        },
+        onError: (err: any) => {
+          toast({ variant: "destructive", title: "Error", description: err.response?.data?.error || err.message });
+        },
+      }
     );
   };
 
@@ -81,6 +92,12 @@ export default function BlackMarket() {
             <Wrench className="w-3 h-3" /> TOOL
           </Badge>
         );
+      case "consumable":
+        return (
+          <Badge className="bg-green-900/50 text-green-400 border-green-800/50 flex items-center gap-1">
+            <Heart className="w-3 h-3" /> CONSUMABLE
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{type}</Badge>;
     }
@@ -96,8 +113,8 @@ export default function BlackMarket() {
           </h1>
         </div>
         <p className="text-muted-foreground max-w-2xl">
-          Illegal goods for the serious professional. Upgrade your arsenal to
-          increase your chances of success.
+          Illegal goods for the serious professional. Upgrade your arsenal —
+          or patch yourself up with consumables.
         </p>
 
         {isLoading ? (
@@ -110,6 +127,9 @@ export default function BlackMarket() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {items?.map((item: MarketItem) => {
               const canAfford = player ? player.cash >= item.price : false;
+              const isConsumable = item.type === "consumable";
+              const isOwned = item.isOwned ?? false;
+
               return (
                 <Card
                   key={item.id}
@@ -119,18 +139,13 @@ export default function BlackMarket() {
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
                       {getTypeBadge(item.type)}
-                      {item.isOwned && (
-                        <Badge
-                          variant="secondary"
-                          className="bg-primary/20 text-primary border-primary/50"
-                        >
+                      {isOwned && !isConsumable && (
+                        <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/50">
                           OWNED
                         </Badge>
                       )}
                     </div>
-                    <CardTitle className="text-xl tracking-wider uppercase">
-                      {item.name}
-                    </CardTitle>
+                    <CardTitle className="text-xl tracking-wider uppercase">{item.name}</CardTitle>
                     <CardDescription>{item.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
@@ -147,13 +162,32 @@ export default function BlackMarket() {
                       </div>
                     </div>
 
-                    <div className="pt-4">
-                      {item.isOwned ? (
-                        <Button
-                          className="w-full font-bold tracking-widest"
-                          variant="secondary"
-                          disabled
-                        >
+                    <div className="pt-4 space-y-2">
+                      {/* Consumables: buy + use */}
+                      {isConsumable ? (
+                        <div className="flex gap-2">
+                          <Button
+                            className="flex-1 font-bold tracking-widest"
+                            onClick={() => handleBuy(item.id)}
+                            disabled={buyItem.isPending || !canAfford}
+                            data-testid={`button-buy-item-${item.id}`}
+                          >
+                            BUY ${item.price.toLocaleString()}
+                          </Button>
+                          {isOwned && (
+                            <Button
+                              variant="secondary"
+                              className="font-bold flex items-center gap-1"
+                              onClick={() => handleUse(item.id, item.name)}
+                              disabled={useItem.isPending}
+                              data-testid={`button-use-item-${item.id}`}
+                            >
+                              <Zap className="w-4 h-4" /> USE
+                            </Button>
+                          )}
+                        </div>
+                      ) : isOwned ? (
+                        <Button className="w-full font-bold tracking-widest" variant="secondary" disabled>
                           OWNED
                         </Button>
                       ) : (

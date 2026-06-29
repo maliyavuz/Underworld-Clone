@@ -37,4 +37,5 @@ export * from './sendMessageInput';
 export * from './sendMessageResult';
 export * from './travelInput';
 export * from './travelResult';
+export * from './useItemResult';
 export * from './vehicle';

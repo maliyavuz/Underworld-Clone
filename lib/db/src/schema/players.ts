@@ -20,6 +20,7 @@ export const playersTable = pgTable("players", {
   crimeCooldownUntil: timestamp("crime_cooldown_until"),
   jailUntil: timestamp("jail_until"),
   jailBail: integer("jail_bail").notNull().default(0),
+  statsLastUpdatedAt: timestamp("stats_last_updated_at").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

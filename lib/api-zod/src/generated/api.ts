@@ -393,6 +393,20 @@ export const PayBailResponse = zod.object({
 
 
 /**
+ * @summary Use a consumable item from inventory
+ */
+export const UseMarketItemParams = zod.object({
+  "itemId": zod.coerce.string()
+})
+
+export const UseMarketItemResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string(),
+  "hpRestored": zod.number()
+})
+
+
+/**
  * @summary Spend nerve to reduce jail time
  */
 export const BustFromJailResponse = zod.object({
